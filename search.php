@@ -97,8 +97,7 @@ echo "
     function optionChange() {
         if (sel.value === "LPN") {
             $("#search").replaceWith('<input type="text" name="search" id="search" class="searchInput" value=""  oninput="inputCheck()">');
-        }
-        else if (sel.value == "Province") {
+        } else if (sel.value == "Province") {
             $("#search").replaceWith('<select name="search" id="search" class="searchInput" oninput="inputCheck()">' + '<option value="" selected>Select</option>' +
                 '<option value="กรุงเทพมหานคร">กรุงเทพมหานคร</option>' +
                 '<option value="กระบี่">กระบี่ </option>' +
@@ -178,29 +177,23 @@ echo "
                 '<option value="อุบลราชธานี">อุบลราชธานี</option>' +
                 '<option value="อ่างทอง">อ่างทอง </option>' +
                 '</select>');
-        }
-        else if (sel.value == "Vehicle") {
+        } else if (sel.value == "Vehicle") {
             $("#search").replaceWith('<select name="search" id="search" class="searchInput"  oninput="inputCheck()">\n' +
                 '           <option value="" selected >...</option> ' +
                 '            <option value="รถยนต์" name="Car">รถยนต์</option>\n' +
                 '            <option value="รถจักรยานยนต์" name="Bike">รถจักรยานยนต์</option>');
-        }
-        else if (sel.value == "Type") {
+        } else if (sel.value == "Type") {
             $("#search").replaceWith('<select name="search" id="search" class="searchInput" oninput="inputCheck()">\n' +
                 '           <option value="" selected >...</option> ' +
                 '            <option value="ผู้ปกครอง" name="Parent">ผู้ปกครอง</option>\n' +
                 '            <option value="ครู" name="Teacher">ครู</option>');
-        }
-        else if (sel.value == "FirstName") {
+        } else if (sel.value == "FirstName") {
             $("#search").replaceWith('<input type="text" name="search" id="search" class="searchInput" value="" oninput="inputCheck()">');
-        }
-        else if (sel.value == "Surname") {
+        } else if (sel.value == "Surname") {
             $("#search").replaceWith('<input type="text" name="search" id="search" class="searchInput" value="" oninput="inputCheck()">');
-        }
-        else if (sel.value == "TEL") {
+        } else if (sel.value == "TEL") {
             $("#search").replaceWith('<input type="text" name="search" id="search" class="searchInput" value="" oninput="inputCheck()">');
-        }
-        else if (sel.value == "Grade") {
+        } else if (sel.value == "Grade") {
             $("#search").replaceWith('<select name="search" id="search" class="searchInput" oninput="inputCheck()"">\n' +
                 '           <option value="" selected >...</option> ' +
                 '            <option value="อ.1">อ.1</option>\n' +
@@ -219,11 +212,9 @@ echo "
                 '            <option value="ม.5">ม.5</option>\n' +
                 '            <option value="ม.6">ม.6</option>\n' +
                 '        </select>');
-        }
-        else if (sel.value == "ChildName") {
+        } else if (sel.value == "ChildName") {
             $("#search").replaceWith('<input type="text" name="search" id="search" class="searchInput" value="" oninput="inputCheck()">');
-        }
-        else if (sel.value == "ChildSurname") {
+        } else if (sel.value == "ChildSurname") {
             $("#search").replaceWith('<input type="text" name="search" id="search" class="searchInput" value="" oninput="inputCheck()">');
         }
         //change input type from select
@@ -277,20 +268,17 @@ if ($Sel === 'Grade') {
 }
 echo "<table><tr><th><b>พาหนะ</th><th><b>เลขทะเบียน</th><th><b>จังหวัด</th><th><b>ตำแหน่ง</th><th><b>ชื่อ</th><th><b>นามสกุล</th><th><b>หมายเลขโทรศัพท์</th><th><b>รายละเอียด</th></tr>";
 if ($TableSel == $ChildOwner) {
-    $selectOwner = mysqli_query($sqli, "SELECT * FROM $ChildOwner WHERE $Sel LIKE '%{$Sea}%' ");
-    while ($LinkID = mysqli_fetch_array($selectOwner)) {
-        $OwnerID = $LinkID['OwnerID'];
-        $result = mysqli_query($sqli, "SELECT * FROM $CarOwner WHERE ID LIKE $OwnerID LIMIT $Limit OFFSET $PageL");
-        if (mysqli_num_rows($result) > 0) {
-            while ($row = mysqli_fetch_array($result)) {
-                $ID = $row['ID'];
-                echo "<tr><td>" . $row['Vehicle'] . "</td><td>" . $row['LPN'] . "</td><td>" . $row['Province'] . "</td><td>" . $row['Type'] . "</td><td>" . $row['FirstName'] . "</td><td>" .
-                    $row['Surname'] . "</td><td>" . $row['TEL'] . "</td><td>" .
-                    "<input type=\"button\" class='TableButton' value=\"รายละเอียด\" onclick=\"window.location.href='detail.php?ID=$ID'\">" . "</td></tr>";
-                echo "<br>";
-            }
+    $result = mysqli_query($sqli, "SELECT * FROM $ChildOwner INNER JOIN $CarOwner ON OwnerID = ID WHERE $Sel LIKE '%{$Sea}%' LIMIT $Limit OFFSET $PageL");
+    if (mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_array($result)) {
+            $ID = $row['ID'];
+            echo "<tr><td>" . $row['Vehicle'] . "</td><td>" . $row['LPN'] . "</td><td>" . $row['Province'] . "</td><td>" . $row['Type'] . "</td><td>" . $row['FirstName'] . "</td><td>" .
+                $row['Surname'] . "</td><td>" . $row['TEL'] . "</td><td>" .
+                "<input type=\"button\" class='TableButton' value=\"รายละเอียด\" onclick=\"window.location.href='detail.php?ID=$ID'\">" . "</td></tr>";
+            echo "<br>";
         }
     }
+
 } else if ($TableSel == $CarOwner) {
     $result = mysqli_query($sqli, "SELECT * FROM $CarOwner WHERE $Sel LIKE '%{$Sea}%' LIMIT $Limit OFFSET $PageL");
 
