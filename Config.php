@@ -1,9 +1,9 @@
 <!-- This program is written by Pada Cherdchoothai,2019 -->
 <?php
-$servername = "admin.otlg.net";
-$username = "ArkuDada";
-$password = "helloworld";
-$dbname = "upro";
+$servername = " ";
+$username = " ";
+$password = " ";
+$dbname = " ";
 // Create connection
 $sqli = new mysqli($servername, $username, $password, $dbname);
 $sqli->set_charset("utf8");
