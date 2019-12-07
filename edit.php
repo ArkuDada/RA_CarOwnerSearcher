@@ -1,23 +1,82 @@
 <!-- This program is written by Pada Cherdchoothai,2019 -->
 <?php
 include 'Config.php';
-echo "<button value=\"รีโหลด\" class=\"refresh\" onClick=\"window.location.reload();\"></button>";
+$LPN = mysqli_real_escape_string($sqli, $_REQUEST['LPN']);
+$Pro = mysqli_real_escape_string($sqli, $_REQUEST['province']);
+$Veh = mysqli_real_escape_string($sqli, $_REQUEST['Vehicle']);
+
 $ID = $_GET["ID"];
+var_dump($ID);
+if ($LPN!=NULL&&$Pro!=NULL&&$Veh!=NULL){
+    $ID = $_POST["ID"];
+    $pS = 1;
+} else {$pS = 0;}
+var_dump($pS);
+
+$spamCheck = mysqli_query($sqli, "SELECT * FROM $CarOwner WHERE LPN LIKE '{$LPN}' AND Province LIKE '{$Pro}' AND Vehicle LIKE '%{$Veh}%'  ");
+$spamRow = mysqli_num_rows($spamCheck);
+$spamResult = mysqli_fetch_array($spamCheck);
+$spamID = $spamResult['ID'];
+var_dump($spamRow);
+if ($spamRow == 1){
+
+    if ($ID==$spamID && $pS == 1){
+        $spam = 1;
+    }else if ($ID!=$spamID && $pS == 1){
+    $spam = 2;
+    }
+} else if ($spamRow == 0){
+    if ($pS == 1){
+        $spam = 1;
+    }else{
+        $spam = 0;
+    }
+}
+
+if ($spam==0){
+    $result = mysqli_query($sqli, "SELECT * from $CarOwner WHERE ID LIKE '$ID'");
+    if (mysqli_num_rows($result) > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $type = $row ['Type'];
+            $Veh = $row['Vehicle'];
+            $LPN = $row['LPN'];
+            $Pro = $row['Province'];
+            $first_name = $row['FirstName'];
+            $last_name = $row['Surname'];
+            $tel = $row['TEL'];
+        }
+    }
+    echo "<form action='edit.php?ID=$ID' name='input' method='post'>
+          <input name='ID' value='$ID' type='hidden' size='1'>";
+}else if ($spam==2){
 $result = mysqli_query($sqli, "SELECT * from $CarOwner WHERE ID LIKE '$ID'");
 if (mysqli_num_rows($result) > 0) {
-    // output data of each row
-    echo "<form action='update.php' name='input' method='post'>
-                   <input name='ID' value='$ID' type='hidden' size='1'>";
     while ($row = $result->fetch_assoc()) {
         $type = $row ['Type'];
         $Veh = $row['Vehicle'];
         $LPN = $row['LPN'];
-        $Pro = $row['Province'];
-        $first_name = $row['FirstName'];
-        $last_name = $row['Surname'];
-        $tel = $row['TEL'];
-        echo " 
-                <p>      
+        $Pro = $row['Province'];}}
+    $first_name = mysqli_real_escape_string($sqli, $_REQUEST['first_name']);
+    $last_name = mysqli_real_escape_string($sqli, $_REQUEST['last_name']);
+    $tel = mysqli_real_escape_string($sqli, $_REQUEST['tel_num']);
+    $childN = mysqli_real_escape_string($sqli, $_REQUEST['childN']);
+    echo "<script> alert('เลขทะเบียนนี้มีในระบบแล้ว'); </script>
+          <form action='edit.php?ID=$ID' name='input' method='post'>
+          <input name='ID' value='$ID' type='hidden' size='1'>";
+}else if ($spam==1){
+    $type = mysqli_real_escape_string($sqli, $_REQUEST['Type']);
+    $Veh = mysqli_real_escape_string($sqli, $_REQUEST['Vehicle']);
+    $LPN = mysqli_real_escape_string($sqli, $_REQUEST['LPN']);
+    $Pro = mysqli_real_escape_string($sqli, $_REQUEST['province']);
+    $first_name = mysqli_real_escape_string($sqli, $_REQUEST['first_name']);
+    $last_name = mysqli_real_escape_string($sqli, $_REQUEST['last_name']);
+    $tel = mysqli_real_escape_string($sqli, $_REQUEST['tel_num']);
+    $childN = mysqli_real_escape_string($sqli, $_REQUEST['childN']);
+    echo "
+          <form action='update.php' name='input' method='post'>
+          <input name='ID' value='$ID' type='hidden' size='1'>";
+}
+echo " <p>      
                 <label for=\"Type\">ตำแหน่ง:</label>
                 <select name=\"Type\" id=\"Type\" oninput=\"inputCheck()\">
                 <option value=\"$type\" name=\"$type\" >$type</option>
@@ -119,35 +178,36 @@ if (mysqli_num_rows($result) > 0) {
                 <input type=\"text\" name=\"last_name\" id=\"lastName\" value='$last_name' oninput=\"inputCheck()\">
                 <label for=\"telephoneNumber\">หมายเลขโทรศัพท์:</label>
                 <input type=\"number\" name=\"tel_num\" id=\"telephoneNumber\" minlength=\"10\" maxlength=\"10\" size=\"10\" value='$tel' oninput=\"inputCheck()\">
-                </p>    
-            ";
-    } //input data from table1
-    $result = mysqli_query($sqli, "SELECT * from $ChildOwner WHERE OwnerID LIKE '$ID'");
-    if (mysqli_num_rows($result) > 0) {
-        $childN = mysqli_num_rows($result);
-        echo "
+                </p>";
+    //input data from table1
+
+if ($spam==0){
+$result = mysqli_query($sqli, "SELECT * from $ChildOwner WHERE OwnerID LIKE '$ID'");
+if (mysqli_num_rows($result) > 0) {
+    $childN = mysqli_num_rows($result);
+    echo "
             <script>
                 var cDivCount = $childN;
             </script>
             ";
-        echo "<div class='childInput'>
+    echo "<div class='childInput'>
                 <input type=\"hidden\" value=\"$childN\"name=\"childN\" id=\"childN\">
                 <label for=\"st\">จำนวน นร</label>
                 <input type=\"number\" name=\"st\" id=\"st\" oninput=\"createChildInput()\" value='$childN'>
                 ";
-        $autoID = 1;
-        while ($row = mysqli_fetch_array($result)) {
-            $cID = "childID$autoID";
-            $cDN = "st$autoID";
-            $cDC = "childDiv$autoID";
-            $cCN = "Class$autoID";
-            $cFN = "st_first_name$autoID";
-            $cLN = "st_last_name$autoID";
-            $ChildID = $row['ChildID'];
-            $class = $row['Grade'];
-            $st_first_name = $row['ChildName'];
-            $st_last_name = $row['ChildSurname'];
-            echo "<div name=\"$cDN\" class=\"$cDC\">
+    $autoID = 1;
+    while ($row = mysqli_fetch_array($result)) {
+        $cID = "childID$autoID";
+        $cDN = "st$autoID";
+        $cDC = "childDiv$autoID";
+        $cCN = "Class$autoID";
+        $cFN = "st_first_name$autoID";
+        $cLN = "st_last_name$autoID";
+        $ChildID = $row['ChildID'];
+        $class = $row['Grade'];
+        $st_first_name = $row['ChildName'];
+        $st_last_name = $row['ChildSurname'];
+        echo "<div name=\"$cDN\" class=\"$cDC\">
                 <p>
                 <input type=\"hidden\" value=\"$ChildID\"name=\"$cID\">
                 <label for=\"Class\"> ชั้น:</label>
@@ -175,12 +235,63 @@ if (mysqli_num_rows($result) > 0) {
                 <input type=\"text\" name=\"$cLN\"  value='$st_last_name'>
                 </p></div>     
                 ";
-            $autoID++;
+        $autoID++;
         }
     }
+}
+else if($spam == 2||$spam == 1){
+    echo"<div class='childInput'>
+        <input type=\"hidden\" value=\"$childN\"name=\"childN\" id=\"childN\">
+        <label for=\"st\">จำนวน นร</label>
+        <input type=\"number\" name=\"st\" id=\"st\" oninput=\"createChildInput()\" value='$childN'>
+        ";
+        for ($i=1;$i<=$childN;$i++){
+        $cDN ="st$i";
+        $cDC ="childDiv$i";
+        $cCN ="Class$i";
+        $cFN ="st_first_name$i";
+        $cLN ="st_last_name$i";
+        $class = mysqli_real_escape_string($sqli, $_REQUEST[$cCN]);
+        $st_first_name = mysqli_real_escape_string($sqli, $_REQUEST[$cFN]);
+        $st_last_name = mysqli_real_escape_string($sqli, $_REQUEST[$cLN]);
+        echo "<div name=\"$cDN\" class=\"$cDC\">
+            <p>
+                <label for=\"Class\"> ชั้น:</label>
+                <select name=\"$cCN\">
+                    <option value=\"$class\" selected=\"$class\">$class</option>
+                    <option value=\"อ.1\">อ.1</option>
+                    <option value=\"อ.2\">อ.2</option>
+                    <option value=\"อ.3\">อ.3</option>
+                    <option value=\"ป.1\">ป.1</option>
+                    <option value=\"ป.2\">ป.2</option>
+                    <option value=\"ป.3\">ป.3</option>
+                    <option value=\"ป.4\">ป.4</option>
+                    <option value=\"ป.5\">ป.5</option>
+                    <option value=\"ป.6\">ป.6</option>
+                    <option value=\"ม.1\">ม.1</option>
+                    <option value=\"ม.2\">ม.2</option>
+                    <option value=\"ม.3\">ม.3</option>
+                    <option value=\"ม.4\">ม.4</option>
+                    <option value=\"ม.5\">ม.5</option>
+                    <option value=\"ม.6\">ม.6</option>
+                </select>
+                <label for=\"stFirstName\">ชื่อ นร:</label>
+                <input type=\"text\" name=\"$cFN\" value='$st_first_name'>
+                <label for=\"stLastName\">นามสกุล นร:</label>
+                <input type=\"text\" name=\"$cLN\"  value='$st_last_name'>
+            </p></div>
+        ";
+    }}
+
     echo "</div><br>
         <input type='submit' id='submit' value='บันทึก' class=\"back\" >";
+    if ($spam==1){
+        echo" <script>
+          document.getElementById(\"submit\").disabled = false;
+          document.getElementById('submit').click();
+          </script>";}
     echo "</form>";
+
 
     echo "
         <div class=\"back\">
@@ -191,7 +302,6 @@ if (mysqli_num_rows($result) > 0) {
                 <input type=\"submit\" class=\"back\" value=\"กลับ\" >
             </form>
         </div>";
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -291,78 +401,167 @@ if (mysqli_num_rows($result) > 0) {
 
         }
     }
+    function inputCheck(){
+
+        lpnSplitCheck(lpnEmp);
+        var proEmp = document.forms['input']['province'].value;
+        var fnEmp = document.forms['input']['first_name'].value.length;
+        var lnEmp = document.forms['input']['last_name'].value.length;
+        var telEmp = document.forms['input']['tel_num'].value.length;
+
+        console.log(lpnEmp , proEmp , fnEmp , lnEmp ,telEmp);
+        if(lpnEmp && proEmp !="" && fnEmp !=0 && fnEmp !=0 && lnEmp !=0 && telEmp ==10){
+
+            document.getElementById("submit").disabled = false ;
+        }
+        else {
+            document.getElementById("submit").disabled = true ;
+        }
+    }
 
     function lpnSplitCheck() {
-        var lpnCheck = document.forms['input']['LPN'].value;
-        var lpnSplit = lpnCheck.split("");
-        var letters = /[ก-ฮ]/;
-        for (i = lpnSplit.length; i < 7; i++) {
-            lpnSplit.push(null);
-        }
-        //if (lpnSplit.length >= 3){}
-        console.log(lpnSplit);
-        var intA = Number.isInteger(parseInt(lpnSplit[0]));
-        var charA = letters.test(lpnSplit[0]);
+        var VehType = document.getElementById("Vehicle").value;
+        if (document.getElementById("Vehicle").value=='รถยนต์'){
+            var lpnCheck = document.forms['input']['LPN'].value;
+            var lpnSplit = lpnCheck.split("");
+            var letters = /[ก-ฮ]/;
+            for (i = lpnSplit.length; i < 7; i++) {
+                lpnSplit.push(null);
+            }
+            //if (lpnSplit.length >= 3){}
+            console.log(lpnSplit);
+            var intA = Number.isInteger(parseInt(lpnSplit[0]));
+            var charA =letters.test(lpnSplit[0]);
 
-        var charB = letters.test(lpnSplit[1]);
+            var charB =letters.test(lpnSplit[1]);
 
-        var intC = Number.isInteger(parseInt(lpnSplit[2]));
-        var charC = letters.test(lpnSplit[2]);
+            var intC = Number.isInteger(parseInt(lpnSplit[2]));
+            var charC =letters.test(lpnSplit[2]);
 
 
-        var intD = Number.isInteger(parseInt(lpnSplit[3]));
-        var empD = Boolean(lpnSplit[3] == null);
-        if (intD || empD) {
-            var resultD = true;
-        } else {
-            var resultD = false;
-        }
-
-        var intE = Number.isInteger(parseInt(lpnSplit[4]));
-        var empE = Boolean(lpnSplit[4] == null);
-        if (intE || empE) {
-            var resultE = true;
-        } else {
-            var resultE = false;
-        }
-
-        var intF = Number.isInteger(parseInt(lpnSplit[5]));
-        var empF = Boolean(lpnSplit[5] == null);
-        if (intF || empF) {
-            var resultF = true;
-        } else {
-            var resultF = false;
-        }
-
-        var intG = Number.isInteger(parseInt(lpnSplit[6]));
-        var empG = Boolean(lpnSplit[6] == null);
-        if (intG || empG) {
-            var resultG = true;
-        } else {
-            var resultG = false;
-        }
-
-        if (intC) {
-
-            if (charA && charB && intC && resultD && resultE && resultF && empG) {
-                console.log(charA, charB, intC, resultD, resultE, resultF, empG);
-                console.log("YES!");
-                lpnEmp = true;
-            } else {
-                lpnEmp = false;
+            var intD = Number.isInteger(parseInt(lpnSplit[3]));
+            var empD = Boolean(lpnSplit[3]  == null);
+            if (intD || empD) {
+                var resultD = true;
+            }else {
+                var resultD = false;
             }
 
-        } else if (charC) {
-
-            if (intA && charB && charC && intD && resultE && resultF && resultG) {
-                console.log(intA, charB, charC, intD, resultE, resultF, empG);
-                console.log("YES!");
-                lpnEmp = true;
-            } else {
-                lpnEmp = false;
+            var intE = Number.isInteger(parseInt(lpnSplit[4]));
+            var empE = Boolean(lpnSplit[4] == null);
+            if (intE || empE) {
+                var resultE = true;
+            }else {
+                var resultE = false;
             }
 
-        }
+            var intF = Number.isInteger(parseInt(lpnSplit[5]));
+            var empF = Boolean(lpnSplit[5]== null);
+            if (intF || empF) {
+                var resultF = true;
+            }else {
+                var resultF = false;
+            }
+
+            var intG = Number.isInteger(parseInt(lpnSplit[6]));
+            var empG = Boolean(lpnSplit[6] == null);
+            if (intG || empG) {
+                var resultG = true;
+            }else {
+                var resultG = false;
+            }
+
+            if (intC) {
+
+                if (charA && charB && intC && resultD && resultE && resultF && empG){
+                    console.log(charA , charB , intC , resultD , resultE , resultF , empG);
+                    console.log("YES!");
+                    lpnEmp = true;
+                }else {lpnEmp = false;}
+
+            } else if (charC) {
+
+                if (intA && charB && charC && intD && resultE && resultF && resultG) {
+                    console.log(intA , charB , charC , intD , resultE , resultF , empG);
+                    console.log("YES!");
+                    lpnEmp = true;
+                }else { lpnEmp = false;}
+
+            }}
+        else if (document.getElementById("Vehicle").value=='รถจักรยานยนต์'){
+            var lpnCheck = document.forms['input']['LPN'].value;
+            var lpnSplit = lpnCheck.split("");
+            var letters = /[ก-ฮ]/;
+            for (i = lpnSplit.length; i < 7; i++) {
+                lpnSplit.push(null);
+            }
+            //if (lpnSplit.length >= 3){}
+            console.log(lpnSplit);
+            var intA = Number.isInteger(parseInt(lpnSplit[0]));
+            var charA =letters.test(lpnSplit[0]);
+            if (intA || charA) {
+                var resultA = true;
+            }else {
+                var resultA = false;
+            }
+
+
+            var charB =letters.test(lpnSplit[1]);
+
+            var intC = Number.isInteger(parseInt(lpnSplit[2]));
+            var charC =letters.test(lpnSplit[2]);
+
+
+            var intD = Number.isInteger(parseInt(lpnSplit[3]));
+            var empD = Boolean(lpnSplit[3]  == null);
+            if (intD || empD) {
+                var resultD = true;
+            }else {
+                var resultD = false;
+            }
+
+            var intE = Number.isInteger(parseInt(lpnSplit[4]));
+            var empE = Boolean(lpnSplit[4] == null);
+            if (intE || empE) {
+                var resultE = true;
+            }else {
+                var resultE = false;
+            }
+
+            var intF = Number.isInteger(parseInt(lpnSplit[5]));
+            var empF = Boolean(lpnSplit[5]== null);
+            if (intF || empF) {
+                var resultF = true;
+            }else {
+                var resultF = false;
+            }
+
+            var intG = Number.isInteger(parseInt(lpnSplit[6]));
+            var empG = Boolean(lpnSplit[6] == null);
+            if (intG || empG) {
+                var resultG = true;
+            }else {
+                var resultG = false;
+            }
+
+            if (intC) {
+
+                if (charA && charB && intC && resultD && resultE && resultF && empG){
+                    console.log(charA , charB , intC , resultD , resultE , resultF , empG);
+                    console.log("YES!");
+                    lpnEmp = true;
+                }else {lpnEmp = false;}
+
+            } else if (charC) {
+
+                if (resultA && charB && charC && intD && resultE && resultF && resultG) {
+                    console.log(resultA , charB , charC , intD , resultE , resultF , resultG);
+                    console.log("YES!");
+                    lpnEmp = true;
+                }else { lpnEmp = false;}
+
+            }}
+        console.log(VehType);
     }
 </script>
 </html>

@@ -215,7 +215,7 @@ echo "
         if ($insertCorrect){
 echo" <script>
       document.getElementById(\"submit\").disabled = false;
-      document.getElementById('input').submit.click();
+      document.getElementById('submit').click();
       </script>";
 
 }?>

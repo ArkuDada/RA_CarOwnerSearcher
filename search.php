@@ -50,7 +50,7 @@ echo "
                 <option value="FirstName">ชื่อ ผปค</option>
                 <option value="Surname">นามสกุล ผปค</option>
                 <option value="TEL">Telephone</option>
-                <option value="Grade">ระดับชั้น</option>
+                <option value="Grade">ระดับชั้น</option>    
                 <option value="ChildName">ชื่อ นร</option>
                 <option value="ChildSurname">นามสกุล นร</option>
             </select>
@@ -74,10 +74,11 @@ echo "
 </body>
 <script>
     src = "M6_project_CarOwner2/script.js";
+
     var sel = document.getElementById('Select');
     var KeepSelectValue = document.getElementById('KeepSelectValue').value;
     var KeepSearchValue = document.getElementById('KeepSearchValue').value;
-    console.log(KeepSelectValue, KeepSearchValue);
+    // console.log(KeepSelectValue, KeepSearchValue);
     window.onload = function keepSearchValue() {
         var opts = sel.options;
         for (var opt, j = 0; opt = opts[j]; j++) {
@@ -87,7 +88,7 @@ echo "
                 document.getElementById('search').value = KeepSearchValue;
                 break;
             }
-        }
+        } //input search value from last page
     }
 
     function reload() {
@@ -97,7 +98,8 @@ echo "
     function optionChange() {
         if (sel.value === "LPN") {
             $("#search").replaceWith('<input type="text" name="search" id="search" class="searchInput" value=""  oninput="inputCheck()">');
-        } else if (sel.value == "Province") {
+        }
+        else if (sel.value == "Province") {
             $("#search").replaceWith('<select name="search" id="search" class="searchInput" oninput="inputCheck()">' + '<option value="" selected>Select</option>' +
                 '<option value="กรุงเทพมหานคร">กรุงเทพมหานคร</option>' +
                 '<option value="กระบี่">กระบี่ </option>' +
@@ -177,23 +179,29 @@ echo "
                 '<option value="อุบลราชธานี">อุบลราชธานี</option>' +
                 '<option value="อ่างทอง">อ่างทอง </option>' +
                 '</select>');
-        } else if (sel.value == "Vehicle") {
+        }
+        else if (sel.value == "Vehicle") {
             $("#search").replaceWith('<select name="search" id="search" class="searchInput"  oninput="inputCheck()">\n' +
                 '           <option value="" selected >...</option> ' +
                 '            <option value="รถยนต์" name="Car">รถยนต์</option>\n' +
                 '            <option value="รถจักรยานยนต์" name="Bike">รถจักรยานยนต์</option>');
-        } else if (sel.value == "Type") {
+        }
+        else if (sel.value == "Type") {
             $("#search").replaceWith('<select name="search" id="search" class="searchInput" oninput="inputCheck()">\n' +
                 '           <option value="" selected >...</option> ' +
                 '            <option value="ผู้ปกครอง" name="Parent">ผู้ปกครอง</option>\n' +
                 '            <option value="ครู" name="Teacher">ครู</option>');
-        } else if (sel.value == "FirstName") {
+        }
+        else if (sel.value == "FirstName") {
             $("#search").replaceWith('<input type="text" name="search" id="search" class="searchInput" value="" oninput="inputCheck()">');
-        } else if (sel.value == "Surname") {
+        }
+        else if (sel.value == "Surname") {
             $("#search").replaceWith('<input type="text" name="search" id="search" class="searchInput" value="" oninput="inputCheck()">');
-        } else if (sel.value == "TEL") {
+        }
+        else if (sel.value == "TEL") {
             $("#search").replaceWith('<input type="text" name="search" id="search" class="searchInput" value="" oninput="inputCheck()">');
-        } else if (sel.value == "Grade") {
+        }
+        else if (sel.value == "Grade") {
             $("#search").replaceWith('<select name="search" id="search" class="searchInput" oninput="inputCheck()"">\n' +
                 '           <option value="" selected >...</option> ' +
                 '            <option value="อ.1">อ.1</option>\n' +
@@ -212,17 +220,18 @@ echo "
                 '            <option value="ม.5">ม.5</option>\n' +
                 '            <option value="ม.6">ม.6</option>\n' +
                 '        </select>');
-        } else if (sel.value == "ChildName") {
+        }
+        else if (sel.value == "ChildName") {
             $("#search").replaceWith('<input type="text" name="search" id="search" class="searchInput" value="" oninput="inputCheck()">');
-        } else if (sel.value == "ChildSurname") {
+        }
+        else if (sel.value == "ChildSurname") {
             $("#search").replaceWith('<input type="text" name="search" id="search" class="searchInput" value="" oninput="inputCheck()">');
         }
         //change input type from select
 
         document.getElementById("submit").disabled = true;
         //disable submit button for safety
-    }
-
+    }//change input type from selec
 
     function inputCheck() {
         var inputEmp = document.getElementById('search').value;
@@ -239,13 +248,6 @@ echo "
     var delBut = document.getElementById("deleteConfirm");
     var modal = document.getElementById("DelConfimrBox");
     modal.style.display = "none";
-
-    function DelConfirm(DelID) {
-        modal.style.display = "block";
-        var link = "window.location.href='delete.php?ID=" + DelID + "'";
-        $(delBut).attr('onclick', link);
-        console.log(delBut, link, delBut.onclick);
-    }
 
     function CLICK() {
         modal.style.display = 'none';
