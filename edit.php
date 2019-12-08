@@ -183,7 +183,7 @@ echo " <p>
 
 if ($spam==0){
 $result = mysqli_query($sqli, "SELECT * from $ChildOwner WHERE OwnerID LIKE '$ID'");
-if (mysqli_num_rows($result) > 0) {
+if (mysqli_num_rows($result) >= 0) {
     $childN = mysqli_num_rows($result);
     echo "
             <script>
@@ -246,16 +246,19 @@ else if($spam == 2||$spam == 1){
         <input type=\"number\" name=\"st\" id=\"st\" oninput=\"createChildInput()\" value='$childN'>
         ";
         for ($i=1;$i<=$childN;$i++){
+        $cID = "childID$i";
         $cDN ="st$i";
         $cDC ="childDiv$i";
         $cCN ="Class$i";
         $cFN ="st_first_name$i";
         $cLN ="st_last_name$i";
+        $childID = mysqli_real_escape_string($sqli, $_REQUEST[$cID]);
         $class = mysqli_real_escape_string($sqli, $_REQUEST[$cCN]);
         $st_first_name = mysqli_real_escape_string($sqli, $_REQUEST[$cFN]);
         $st_last_name = mysqli_real_escape_string($sqli, $_REQUEST[$cLN]);
         echo "<div name=\"$cDN\" class=\"$cDC\">
             <p>
+                <input type=\"hidden\" value=\"$childID\"name=\"$cID\">
                 <label for=\"Class\"> ชั้น:</label>
                 <select name=\"$cCN\">
                     <option value=\"$class\" selected=\"$class\">$class</option>

@@ -30,7 +30,12 @@
         $(delBut).attr('onclick',link);
         console.log(delBut, link , delBut.onclick);
     }
-
+    function DelConfirmC(DelID) {
+        modal.style.display= "block";
+        var link = "window.location.href='deleteC.php?ID="+DelID+"'";
+        $(delBut).attr('onclick',link);
+        console.log(delBut, link , delBut.onclick);
+    }
     function CLICK() {
         modal.style.display= 'none';
     }
@@ -57,10 +62,11 @@ if (mysqli_num_rows($result) > 0){
 
 $result = mysqli_query($sqli,"SELECT * from $ChildOwner WHERE OwnerID LIKE '$ID'");
 if (mysqli_num_rows($result) > 0){
-    echo "<table><tr><th><b>ชั้น</th><th><b>ชื่อ นร.</th><th><b>นามสกุล นร.</th></tr>";
+    echo "<table><tr><th><b>ชั้น</th><th><b>ชื่อ นร.</th><th><b>นามสกุล นร.</th><th><b>ลบ</th></tr>";
     while ($row = mysqli_fetch_array($result)) {
-        $ID=$row['ID'];
-        echo "<tr><td>". $row['Grade'] . "</td><td>" . $row['ChildName'] . "</td><td>" . $row['ChildSurname']."</td></tr>";
+        $ID=$row['ChildID'];
+        echo "<tr><td>". $row['Grade'] . "</td><td>" . $row['ChildName'] . "</td><td>" . $row['ChildSurname']."</td><td>".
+            "<input type=\"button\" class='TableButton' value=\"ลบ\" id=\"$ID\" onclick=\"DelConfirmC(this . id)\">"."</td></tr>";
         echo "<br>";
     }
     echo "</table>";
